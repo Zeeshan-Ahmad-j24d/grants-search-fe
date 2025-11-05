@@ -1,3 +1,4 @@
+// src/components/ResetPassword.tsx
 import React, { useState, useEffect } from "react";
 import { useStytchB2BClient } from "@stytch/react/b2b";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -34,14 +35,21 @@ const ResetPassword = () => {
     setError("");
 
     try {
-      await stytchClient.passwords.resetByEmail({
+      const response = await stytchClient.passwords.discovery.resetByEmail({
         password_reset_token: token,
         password: password,
-        session_duration_minutes: 60,
       });
 
-      // Password reset successful, redirect to grants
-      navigate("/grants");
+      // Navigate to organization selection with discovered orgs
+      navigate("/select-organization", {
+        state: {
+          discoveredOrgs: response.discovered_organizations || [],
+          email: response.email_address,
+        },
+      });
+
+      // // Password reset successful, redirect to grants
+      // navigate("/grants");
     } catch (err: any) {
       if (err.error_type === "weak_password") {
         setError("Password is too weak. Please use a stronger password.");

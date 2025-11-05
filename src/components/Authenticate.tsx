@@ -1,3 +1,4 @@
+// src/components/Authenticate.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { useStytchB2BClient, useStytchMemberSession } from "@stytch/react/b2b";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -13,7 +14,7 @@ const Authenticate = () => {
   useEffect(() => {
     // If already authenticated, redirect
     if (session) {
-      navigate("/grants");
+      navigate("/dashboard");
       return;
     }
 

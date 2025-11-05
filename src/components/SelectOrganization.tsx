@@ -6,13 +6,13 @@ const SelectOrganization = () => {
   const stytchClient = useStytchB2BClient();
   const location = useLocation();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [joiningOrgId, setJoiningOrgId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const { discoveredOrgs, email } = location.state || {};
 
   const handleSelectOrganization = async (orgId: string) => {
-    setLoading(true);
+    setJoiningOrgId(orgId);
     setError("");
 
     try {
@@ -21,11 +21,11 @@ const SelectOrganization = () => {
         session_duration_minutes: 60,
       });
 
-      navigate("/grants");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Failed to join organization");
     } finally {
-      setLoading(false);
+      setJoiningOrgId(null);
     }
   };
 
@@ -107,17 +107,22 @@ const SelectOrganization = () => {
               onClick={() =>
                 handleSelectOrganization(org.organization.organization_id)
               }
-              disabled={loading}
+              disabled={joiningOrgId === org.organization.organization_id}
               style={{
                 padding: "8px 16px",
                 backgroundColor: "#007bff",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
-                cursor: loading ? "not-allowed" : "pointer",
+                cursor:
+                  joiningOrgId === org.organization.organization_id
+                    ? "not-allowed"
+                    : "pointer",
               }}
             >
-              {loading ? "Joining..." : "Select Organization"}
+              {joiningOrgId === org.organization.organization_id
+                ? "Joining..."
+                : "Select Organization"}
             </button>
           </div>
         ))}

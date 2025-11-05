@@ -1,3 +1,4 @@
+// src/components/CreateOrganization.tsx
 import React, { useState } from "react";
 import { useStytchB2BClient } from "@stytch/react/b2b";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -26,7 +27,7 @@ const CreateOrganization = () => {
       });
 
       // Successfully created organization and logged in
-      navigate("/grants");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Failed to create organization");
     } finally {

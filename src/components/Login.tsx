@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useStytchB2BClient } from "@stytch/react/b2b";
 import { useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
-import { FaMicrosoft } from "react-icons/fa";
 
 const Login = () => {
   const stytchClient = useStytchB2BClient();

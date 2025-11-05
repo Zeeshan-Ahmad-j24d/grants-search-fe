@@ -14,7 +14,7 @@ class ApiService {
     const cookies = document.cookie.split(";");
     for (const cookie of cookies) {
       const [name, value] = cookie.trim().split("=");
-      if (name === "stytch_session") {
+      if (name === "stytch_session" || name === "stytch_session_jwt") {
         return value;
       }
     }
@@ -46,6 +46,7 @@ class ApiService {
     const response = await fetch(url, {
       ...options,
       headers,
+      credentials: "include",
     });
 
     console.log("Response status:", response.status);
@@ -96,6 +97,36 @@ class ApiService {
       method: "POST",
       body: JSON.stringify({ query, topK, filters }),
     });
+  }
+
+  // Save a search for the current user/organization.
+  // payload example: { query: string, results: Array<{ grantId: string, relevance?: number }>, name?: string, organizationId?: string }
+  async saveSearch(payload: {
+    query: string;
+    results: Array<{ grantId: string; relevance?: number | null }>;
+    name?: string;
+    organizationId?: string;
+  }) {
+    // POST to /saved-searches, backend should determine org from session if organizationId omitted
+    return this.request<any>(`/saved-searches`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // Get saved searches. If orgId provided, call the organization-scoped endpoint, otherwise call a generic endpoint
+  // GET /organizations/:orgId/saved-searches
+  async getSavedSearches(orgId?: string) {
+    const endpoint = orgId
+      ? `/organizations/${encodeURIComponent(orgId)}/saved-searches`
+      : `/saved-searches`;
+    return this.request<any>(endpoint);
+  }
+
+  // Get a single saved search by id
+  // GET /saved-searches/:id
+  async getSavedSearchById(id: string) {
+    return this.request<any>(`/saved-searches/${encodeURIComponent(id)}`);
   }
 }
 

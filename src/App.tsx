@@ -1,5 +1,4 @@
 // src/App.tsx
-import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import Authenticate from "./components/Authenticate";
@@ -10,21 +9,58 @@ import SelectOrganization from "./components/SelectOrganization";
 import RequestPasswordReset from "./components/RequestPasswordReset";
 import ResetPassword from "./components/ResetPassword";
 import CreateOrganization from "./components/CreateOrganization";
+import PublicRoute from "./components/PublicRoute";
+import Dashboard from "./components/Dashboard";
+import SavedGrants from "./components/SavedGrants";
+import SavedGrantDetails from "./components/SavedGrantDetails";
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
           <Route
             path="/request-password-reset"
-            element={<RequestPasswordReset />}
+            element={
+              <PublicRoute>
+                <RequestPasswordReset />
+              </PublicRoute>
+            }
           />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/reset-password"
+            element={
+              <PublicRoute>
+                <ResetPassword />
+              </PublicRoute>
+            }
+          />
           <Route path="/select-organization" element={<SelectOrganization />} />
-          <Route path="/create-organization" element={<CreateOrganization />} />
+          <Route
+            path="/create-organization"
+            element={
+              <PublicRoute>
+                <CreateOrganization />
+              </PublicRoute>
+            }
+          />
           <Route path="/authenticate" element={<Authenticate />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/grants"
             element={
@@ -41,7 +77,23 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/" element={<Navigate to="/grants" replace />} />
+          <Route
+            path="/saved-grants"
+            element={
+              <ProtectedRoute>
+                <SavedGrants />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/saved-grants/:id"
+            element={
+              <ProtectedRoute>
+                <SavedGrantDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
     </BrowserRouter>

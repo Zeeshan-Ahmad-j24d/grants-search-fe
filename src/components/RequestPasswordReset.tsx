@@ -1,3 +1,4 @@
+// src/components/RequestPasswordReset.tsx
 import React, { useState } from "react";
 import { useStytchB2BClient } from "@stytch/react/b2b";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,7 +8,6 @@ const RequestPasswordReset = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState(location.state?.email || "");
-  const [organizationId, setOrganizationId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -18,11 +18,10 @@ const RequestPasswordReset = () => {
     setError("");
 
     try {
-      await stytchClient.passwords.resetByEmailStart({
-        organization_id: organizationId,
+      await stytchClient.passwords.discovery.resetByEmailStart({
         email_address: email,
-        login_redirect_url: `${window.location.origin}/login`,
         reset_password_redirect_url: `${window.location.origin}/reset-password`,
+        discovery_redirect_url: `${window.location.origin}/authenticate`,
         reset_password_expiration_minutes: 30,
       });
       setSuccess(true);
@@ -60,9 +59,7 @@ const RequestPasswordReset = () => {
   return (
     <div style={{ padding: "20px", maxWidth: "400px", margin: "50px auto" }}>
       <h2>Set / Reset Password</h2>
-      <p>
-        Enter your email and organization ID to receive a password reset link.
-      </p>
+      <p>Enter your email to receive a password reset link.</p>
 
       <form onSubmit={handleSendResetEmail}>
         <div style={{ marginBottom: "15px" }}>
@@ -77,28 +74,13 @@ const RequestPasswordReset = () => {
           />
         </div>
 
-        <div style={{ marginBottom: "15px" }}>
-          <label>Organization ID</label>
-          <input
-            type="text"
-            value={organizationId}
-            onChange={(e) => setOrganizationId(e.target.value)}
-            placeholder="organization-test-..."
-            required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-          <small style={{ color: "#666" }}>
-            Contact your admin if you don't know your organization ID
-          </small>
-        </div>
-
         {error && (
           <div style={{ color: "red", marginBottom: "15px" }}>{error}</div>
         )}
 
         <button
           type="submit"
-          disabled={loading || !email || !organizationId}
+          disabled={loading || !email}
           style={{
             width: "100%",
             padding: "10px",
